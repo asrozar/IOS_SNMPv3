@@ -93,7 +93,7 @@ def main():
     group = args.group
     snmpuser = args.snmpuser
     snmphost = args.snmphost
-    snmpcontact = args.snmpcontac
+    snmpcontact = args.snmpcontact
     snmpauth = args.snmpauth
     snmppriv = args.snmppriv
     snmpencrypt = args.snmpencrypt
