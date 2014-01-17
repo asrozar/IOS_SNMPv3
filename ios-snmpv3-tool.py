@@ -104,7 +104,7 @@ def main():
             child = connect(user, host, passwd, en_passwd)
             send_command(child, SNMPGROUPCMD + group + V3PRIVCMD)
             send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD + snmpencrypt + ' ' + snmppriv)
-            send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + + PRIVCMD + snmpuser)
+            send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
             send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
             send_command(child, SNMPSRVENTRAP)
             send_command(child, ENDCMD)
