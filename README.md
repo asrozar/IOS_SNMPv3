@@ -1,4 +1,4 @@
 IOS
 ===
 
-IOS Pythin scripts
+IOS Python scripts
