@@ -22,6 +22,7 @@ __author__ = 'Avery Rozar'
 #            ::::::
 #              ::
 
+import getpass
 import pexpect
 import argparse
 
@@ -45,19 +46,19 @@ def send_command(child, cmd):
     print child.before
 
 def connect(user, host, passwd, en_passwd):
-    ssh_newkey = 'Are you sure you want to continue connecting?'
+    ssh_newkey = 'Are you sure you want to continue connecting (yes/no)?'
     constr = 'ssh ' + user + '@' + host
     child = pexpect.spawn(constr)
     ret = child.expect([pexpect.TIMEOUT, ssh_newkey, '[P|p]assword:'])
 
     if ret == 0:
-        print '[-] Error Connecting'
+        print '[-] Error Connecting to ' + host
         return
     if ret == 1:
         child.sendline('yes')
         ret = child.expect([pexpect.TIMEOUT, '[P|p]assword:'])
         if ret == 0:
-            print '[-] Error Connecting'
+            print '[-] Error accepting new key from ' + host
             return
     child.sendline(passwd)
     child.expect(PROMPT)
@@ -98,22 +99,61 @@ def main():
     snmppriv = args.snmppriv
     snmpencrypt = args.snmpencrypt
 
+    if host is None and hosts is None:
+        print('I need to know what host[s] to connect to')
+        print parser.usage
+        exit(0)
+
+    if user is None:
+        user = raw_input(prompt='What is your username?')
+
+    if passwd is None:
+        passwd = getpass.getpass(prompt='User Password:')
+
+    if en_passwd is None:
+        en_passwd = getpass.getpass(prompt='Enable Secret:')
+
+    if group is None:
+        group = raw_input(prompt='What is your SNMP group?')
+
+    if snmpuser is None:
+        snmpuser = raw_input(prompt='What is your SNMP user?')
+
+    if snmphost is None:
+        snmphost = raw_input(prompt='What is your SNMP host address?')
+
+    if snmpcontact is None:
+         snmpcontact = raw_input(prompt='Who is your SNMP contact?')
+
+    if snmpauth is None:
+        snmpauth = raw_input(prompt='What is the SNMP usr auth?')
+
+    if snmppriv is None:
+        snmppriv = raw_input(prompt='What is the SNMP priv?')
+
+    if snmpencrypt is None:
+        snmpencrypt = raw_input(prompt='What type of encryption will you use? des, 3des, or aes(128/192/256)')
+
     if hosts:
         for line in hosts:
             host = line.rstrip()
             child = connect(user, host, passwd, en_passwd)
-            send_command(child, SNMPGROUPCMD + group + V3PRIVCMD)
-            send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD + snmpencrypt + ' ' + snmppriv)
-            send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
-            send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
-            send_command(child, SNMPSRVENTRAP)
-            send_command(child, ENDCMD)
-            send_command(child, WRME)
+
+            if child:
+                (child, SNMPGROUPCMD + group + V3PRIVCMD)
+                send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD
+                                    + snmpencrypt + ' ' + snmppriv)
+                send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
+                send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
+                send_command(child, SNMPSRVENTRAP)
+                send_command(child, ENDCMD)
+                send_command(child, WRME)
 
     elif host:
         child = connect(user, host, passwd, en_passwd)
         send_command(child, SNMPGROUPCMD + group + V3PRIVCMD)
-        send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD + snmpencrypt + ' ' + snmppriv)
+        send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD +
+                            snmpencrypt + ' ' + snmppriv)
         send_command(child, SNMPSRVHOSTCMD + ' ' + snmphost + VERSION3CMD + PRIVCMD + snmpuser)
         send_command(child, SNMPSRVCONTACTCMD + snmpcontact)
         send_command(child, SNMPSRVENTRAP)
