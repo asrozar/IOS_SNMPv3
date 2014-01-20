@@ -105,7 +105,7 @@ def main():
         exit(0)
 
     if user is None:
-        user = raw_input(prompt='What is your username?')
+        user = raw_input('What is your username?')
 
     if passwd is None:
         passwd = getpass.getpass(prompt='User Password:')
@@ -114,25 +114,25 @@ def main():
         en_passwd = getpass.getpass(prompt='Enable Secret:')
 
     if group is None:
-        group = raw_input(prompt='What is your SNMP group?')
+        group = raw_input('What is your SNMP group?')
 
     if snmpuser is None:
-        snmpuser = raw_input(prompt='What is your SNMP user?')
+        snmpuser = raw_input('What is your SNMP user?')
 
     if snmphost is None:
-        snmphost = raw_input(prompt='What is your SNMP host address?')
+        snmphost = raw_input('What is your SNMP host address?')
 
     if snmpcontact is None:
-         snmpcontact = raw_input(prompt='Who is your SNMP contact?')
+         snmpcontact = raw_input('Who is your SNMP contact?')
 
     if snmpauth is None:
-        snmpauth = raw_input(prompt='What is the SNMP usr auth?')
+        snmpauth = raw_input('What is the SNMP usr auth?')
 
     if snmppriv is None:
-        snmppriv = raw_input(prompt='What is the SNMP priv?')
+        snmppriv = raw_input('What is the SNMP priv?')
 
     if snmpencrypt is None:
-        snmpencrypt = raw_input(prompt='What type of encryption will you use? des, 3des, or aes(128/192/256)')
+        snmpencrypt = raw_input('What type of encryption will you use? des, 3des, or aes(128/192/256)')
 
     if hosts:
         for line in hosts:
