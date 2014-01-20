@@ -120,19 +120,19 @@ def main():
         snmpuser = raw_input('Enter your SNMP user: ')
 
     if snmphost is None:
-        snmphost = raw_input('Enter your SNMP host address: ')
+        snmphost = raw_input('Enter your SNMP server address: ')
 
     if snmpcontact is None:
-         snmpcontact = raw_input('Who is your SNMP contact: ')
+         snmpcontact = raw_input('Who is your SNMP contact info: ')
 
     if snmpauth is None:
-        snmpauth = raw_input('Enter the SNMP usr auth: ')
+        snmpauth = raw_input('Enter the SNMP user auth string: ')
 
     if snmppriv is None:
-        snmppriv = raw_input('Enter the SNMP priv: ')
+        snmppriv = raw_input('Enter the SNMP priv string: ')
 
     if snmpencrypt is None:
-        snmpencrypt = raw_input('Enter encryption | des, 3des, or aes(128/192/256): ')
+        snmpencrypt = raw_input('Enter encryption type | des, 3des, or aes(128/192/256): ')
 
     if hosts:
         for line in hosts:
