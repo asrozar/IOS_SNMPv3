@@ -43,7 +43,7 @@ from modules.config_mode import *
 from modules.send_cmd import *
 from modules.cmds import *
 
-PROMPT = ['#', '>']
+PROMPT = ['.#', '.>']
 SNMPGROUPCMD = ' snmp-server group '
 V3PRIVCMD = ' v3 priv '
 SNMPSRVUSRCMD = ' snmp-server user '
