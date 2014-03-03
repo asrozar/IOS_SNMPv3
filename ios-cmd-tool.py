@@ -1,67 +1,50 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-__author__ = 'Avery Rozar'
-#             ...
-#        .:::|#:#|::::.
-#     .:::::|##|##|::::::.
-#     .::::|##|:|##|:::::.
-#      ::::|#|:::|#|:::::
-#      ::::|#|:::|#|:::::
-#      ::::|##|:|##|:::::
-#      ::::.|#|:|#|.:::::
-#      ::|####|::|####|::
-#      :|###|:|##|:|###|:
-#      |###|::|##|::|###|
-#      |#|::|##||##|::|#|
-#      |#|:|##|::|##|:|#|
-#      |#|##|::::::|##|#|
-#       |#|::::::::::|#|
-#        ::::::::::::::
-#          ::::::::::
-#           ::::::::
-#            ::::::
-#              ::
+"""
+(C) Copyright [2014] InfoSec Consulting, Inc.
 
-import pexpect
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-import pxssh
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+         ...
+    .:::|#:#|::::.
+ .:::::|##|##|::::::.
+ .::::|##|:|##|:::::.
+  ::::|#|:::|#|:::::
+  ::::|#|:::|#|:::::
+  ::::|##|:|##|:::::
+  ::::.|#|:|#|.:::::
+  ::|####|::|####|::
+  :|###|:|##|:|###|:
+  |###|::|##|::|###|
+  |#|::|##||##|::|#|
+  |#|:|##|::|##|:|#|
+  |#|##|::::::|##|#|
+   |#|::::::::::|#|
+    ::::::::::::::
+      ::::::::::
+       ::::::::
+        ::::::
+          ::
+"""
+
 import optparse
-import time
-from threading import *
+from modules.enable_mode import *
+from modules.send_cmd import *
 
 PROMPT = ['#', '>',]
 UNPROMPT = ['/.U./']
 PWPROMPT = ['/.P./']
 
-def send_command(child, cmd):
-    child.sendline(cmd)
-    child.expect(PROMPT)
-    print child.before
-
-def connect(user, host, passwd, en_passwd):
-    ssh_newkey = 'Are you sure you want to continue connecting?'
-    constr = 'ssh ' + user + '@' + host
-    child = pexpect.spawn(constr)
-    ret = child.expect([pexpect.TIMEOUT, ssh_newkey, '[P|p]assword:'])
-
-    if ret == 0:
-        print '[-] Error Connecting'
-        return
-    if ret == 1:
-        child.sendline('yes')
-        ret = child.expect([pexpect.TIMEOUT, '[P|p]assword:'])
-        if ret == 0:
-            print '[-] Error Connecting'
-            return
-    child.sendline(passwd)
-    child.expect(PROMPT)
-    child.sendline('enable')
-    child.sendline(en_passwd)
-    child.expect(PROMPT)
-    child.sendline('terminal pager 0')
-    child.expect(PROMPT)
-
-    return child
 
 def main():
     parser = optparse.OptionParser('usage %prog ' + '-H <host> -u <user> -p <passwd> -e <en_passwd> -c <command>')
@@ -82,7 +65,7 @@ def main():
         print parser.usage
         exit(0)
 
-    child = connect(user, host, passwd, en_passwd)
+    child = enable_mode(user, host, passwd, en_passwd)
     send_command(child, cmd)
 
 if __name__ == '__main__':

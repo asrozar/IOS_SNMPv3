@@ -1,30 +1,47 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-__author__ = 'Avery Rozar'
-#             ...
-#        .:::|#:#|::::.
-#     .:::::|##|##|::::::.
-#     .::::|##|:|##|:::::.
-#      ::::|#|:::|#|:::::
-#      ::::|#|:::|#|:::::
-#      ::::|##|:|##|:::::
-#      ::::.|#|:|#|.:::::
-#      ::|####|::|####|::
-#      :|###|:|##|:|###|:
-#      |###|::|##|::|###|
-#      |#|::|##||##|::|#|
-#      |#|:|##|::|##|:|#|
-#      |#|##|::::::|##|#|
-#       |#|::::::::::|#|
-#        ::::::::::::::
-#          ::::::::::
-#           ::::::::
-#            ::::::
-#              ::
+"""
+(C) Copyright [2014] InfoSec Consulting, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+         ...
+    .:::|#:#|::::.
+ .:::::|##|##|::::::.
+ .::::|##|:|##|:::::.
+  ::::|#|:::|#|:::::
+  ::::|#|:::|#|:::::
+  ::::|##|:|##|:::::
+  ::::.|#|:|#|.:::::
+  ::|####|::|####|::
+  :|###|:|##|:|###|:
+  |###|::|##|::|###|
+  |#|::|##||##|::|#|
+  |#|:|##|::|##|:|#|
+  |#|##|::::::|##|#|
+   |#|::::::::::|#|
+    ::::::::::::::
+      ::::::::::
+       ::::::::
+        ::::::
+          ::
+"""
 
 import getpass
-import pexpect
 import argparse
+from modules.enable_mode import *
+from modules.send_cmd import *
+from modules.cmds import *
 
 PROMPT = ['#', '>']
 SNMPGROUPCMD = ' snmp-server group '
@@ -39,35 +56,6 @@ SNMPSRVENTRAP = ' snmp-server enable traps '
 SNMPSRVCONTACTCMD = ' snmp-server contact '
 ENDCMD = ' end '
 WRME = ' write memory '
-
-def send_command(child, cmd):
-    child.sendline(cmd)
-    child.expect(PROMPT)
-    print child.before
-
-def connect(user, host, passwd, en_passwd):
-    ssh_newkey = 'Are you sure you want to continue connecting (yes/no): '
-    constr = 'ssh ' + user + '@' + host
-    child = pexpect.spawn(constr)
-    ret = child.expect([pexpect.TIMEOUT, ssh_newkey, '[P|p]assword:'])
-
-    if ret == 0:
-        print '[-] Error Connecting to ' + host
-        return
-    if ret == 1:
-        child.sendline('yes')
-        ret = child.expect([pexpect.TIMEOUT, '[P|p]assword:'])
-        if ret == 0:
-            print '[-] Error accepting new key from ' + host
-            return
-    child.sendline(passwd)
-    child.expect(PROMPT)
-    child.sendline('enable')
-    child.sendline(en_passwd)
-    child.expect(PROMPT)
-    child.sendline('config t')
-    child.expect(PROMPT)
-    return child
 
 def main():
     parser = argparse.ArgumentParser('usage %prog ' + '--host --host_file --username --password--enable --group --snmp_user --snmp_host --snmp_contact --snmp_v3_auth --snmp_v3_hmac --snmp_v3_priv --snmp_v3_encr')
@@ -137,7 +125,7 @@ def main():
     if hosts:
         for line in hosts:
             host = line.rstrip()
-            child = connect(user, host, passwd, en_passwd)
+            child = enable_mode(user, host, passwd, en_passwd)
 
             if child:
                 (child, SNMPGROUPCMD + group + V3PRIVCMD)
@@ -150,7 +138,7 @@ def main():
                 send_command(child, WRME)
 
     elif host:
-        child = connect(user, host, passwd, en_passwd)
+        child = enable_mode(user, host, passwd, en_passwd)
         send_command(child, SNMPGROUPCMD + group + V3PRIVCMD)
         send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD +
                             snmpencrypt + ' ' + snmppriv)
