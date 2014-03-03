@@ -39,7 +39,6 @@ limitations under the License.
 __author__ = 'Avery Rozar'
 
 import pexpect
-
 from modules.prompts import *
 from modules.cmds import *
 
