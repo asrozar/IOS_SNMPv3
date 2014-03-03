@@ -44,7 +44,7 @@ from modules.prompts import *
 from modules.cmds import *
 
 
-def enable_mode(user, host, passwd, en_passwd):
+def config_mode(user, host, passwd, en_passwd):
     ssh_newkey = 'Are you sure you want to continue connecting (yes/no)?'
     constr = 'ssh ' + user + '@' + host
     child = pexpect.spawn(constr)
@@ -60,9 +60,9 @@ def enable_mode(user, host, passwd, en_passwd):
             print '[-] Could not accept new key from ' + host
             return
     child.sendline(passwd)
-    auth = child.expect(['[P|p]assword:', '.>', '.#'])
+    auth = child.expect(['.[P|p]assword:', '.>', '.#'])
     if auth == 0:
-        print 'User password is incorrect'
+        print 'User password for ' + host + ' is incorrect'
         return
     if auth == 1:
         child.sendline('enable')
@@ -73,7 +73,7 @@ def enable_mode(user, host, passwd, en_passwd):
             return
         if enable == 1:
             child.sendline(SHOWVER)
-            what_os = child.expect([pexpect.TIMEOUT, '.IOS.', '.Adaptive.'])
+            what_os = child.expect([pexpect.TIMEOUT, '.IOS.'])
             if what_os == 0:
                 print 'show ver' + ' time out' + 'for ' + host
                 return
@@ -82,16 +82,12 @@ def enable_mode(user, host, passwd, en_passwd):
                 child.expect(PRIV_EXEC_MODE)
                 child.sendline(IOSTERMLEN0)
                 child.expect(PRIV_EXEC_MODE)
-                return child
-            if what_os == 2:  # ASAOS
-                child.sendline(QOUTMORE)
-                child.expect(PRIV_EXEC_MODE)
-                child.sendline(ASATERMPAGER0)
+                child.sendline('config t')
                 child.expect(PRIV_EXEC_MODE)
                 return child
     if auth == 2:
         child.sendline(SHOWVER)
-        what_os = child.expect([pexpect.TIMEOUT,  '.IOS.', '.Adaptive.'])
+        what_os = child.expect([pexpect.TIMEOUT,  '.IOS.'])
         if what_os == 0:
             print 'show ver' + ' time out' + 'for ' + host
             return
@@ -100,11 +96,7 @@ def enable_mode(user, host, passwd, en_passwd):
             child.expect(PRIV_EXEC_MODE)
             child.sendline(IOSTERMLEN0)
             child.expect(PRIV_EXEC_MODE)
-            return child
-        if what_os == 2:  # ASAOS
-            child.sendline(QOUTMORE)
-            child.expect(PRIV_EXEC_MODE)
-            child.sendline(ASATERMPAGER0)
+            child.sendline('config t')
             child.expect(PRIV_EXEC_MODE)
             return child
 
