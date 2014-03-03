@@ -125,7 +125,7 @@ def main():
     if hosts:
         for line in hosts:
             host = line.rstrip()
-            child = con(user, host, passwd, en_passwd)
+            child = config_mode(user, host, passwd, en_passwd)
 
             if child:
                 (child, SNMPGROUPCMD + group + V3PRIVCMD)
@@ -138,7 +138,7 @@ def main():
                 send_command(child, WRME)
 
     elif host:
-        child = enable_mode(user, host, passwd, en_passwd)
+        child = config_mode(user, host, passwd, en_passwd)
         send_command(child, SNMPGROUPCMD + group + V3PRIVCMD)
         send_command(child, SNMPSRVUSRCMD + snmpuser + ' ' + group + V3AUTHCMD + SHAHMACCMD + snmpauth + PRIVCMD +
                             snmpencrypt + ' ' + snmppriv)
