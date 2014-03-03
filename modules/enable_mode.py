@@ -63,9 +63,9 @@ def enable_mode(user, host, passwd, en_passwd):
         print '[-] Could not connect to ' + host
         return
     child.sendline(passwd)
-    auth = child.expect(['[P|p]assword:', '.>', '.#'])
+    auth = child.expect(['.[P|p]assword:', '.>', '.#'])
     if auth == 0:
-        print 'User password is incorrect'
+        print 'User password for ' + host + ' is incorrect'
         return
     if auth == 1:
         child.sendline('enable')
