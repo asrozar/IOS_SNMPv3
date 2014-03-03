@@ -39,7 +39,7 @@ limitations under the License.
 
 import getpass
 import argparse
-from modules.enable_mode import *
+from modules.config_mode import *
 from modules.send_cmd import *
 from modules.cmds import *
 
@@ -125,7 +125,7 @@ def main():
     if hosts:
         for line in hosts:
             host = line.rstrip()
-            child = enable_mode(user, host, passwd, en_passwd)
+            child = con(user, host, passwd, en_passwd)
 
             if child:
                 (child, SNMPGROUPCMD + group + V3PRIVCMD)
